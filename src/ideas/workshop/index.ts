@@ -1,0 +1,1 @@
+export { WorkshopIdea } from './WorkshopIdea'

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <rect width="800" height="500" fill="#0F1419"/>
+  <rect x="0" y="0" width="200" height="500" fill="#151C24"/>
+  <rect x="24" y="28" width="120" height="14" rx="3" fill="#2A9D8F"/>
+  <rect x="24" y="70" width="152" height="10" rx="2" fill="#2A3540"/>
+  <rect x="24" y="94" width="132" height="10" rx="2" fill="#2A3540"/>
+  <rect x="24" y="118" width="140" height="10" rx="2" fill="#1E6F66"/>
+  <rect x="24" y="142" width="120" height="10" rx="2" fill="#2A3540"/>
+  <rect x="224" y="28" width="200" height="18" rx="4" fill="#E8EEF2"/>
+  <rect x="224" y="60" width="120" height="10" rx="2" fill="#5A6A78"/>
+  <rect x="224" y="100" width="160" height="90" rx="8" fill="#1A222C" stroke="#2A9D8F" stroke-opacity="0.4"/>
+  <rect x="400" y="100" width="160" height="90" rx="8" fill="#1A222C"/>
+  <rect x="576" y="100" width="160" height="90" rx="8" fill="#1A222C"/>
+  <rect x="240" y="118" width="80" height="8" rx="2" fill="#5A6A78"/>
+  <rect x="240" y="138" width="100" height="28" rx="4" fill="#2A9D8F" fill-opacity="0.25"/>
+  <rect x="224" y="220" width="512" height="220" rx="8" fill="#1A222C"/>
+  <rect x="248" y="250" width="80" height="8" rx="2" fill="#5A6A78"/>
+  <rect x="248" y="280" width="460" height="12" rx="2" fill="#243040"/>
+  <rect x="248" y="308" width="420" height="12" rx="2" fill="#243040"/>
+  <rect x="248" y="336" width="440" height="12" rx="2" fill="#243040"/>
+  <rect x="248" y="364" width="380" height="12" rx="2" fill="#243040"/>
+  <text x="248" y="248" fill="#2A9D8F" font-family="system-ui" font-size="12" font-weight="600">BIMS · Sample Registry</text>
+</svg>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <rect width="800" height="500" fill="#F7F4EF"/>
+  <rect x="0" y="0" width="800" height="64" fill="#FFFFFF"/>
+  <rect x="40" y="22" width="100" height="20" rx="4" fill="#3D5A80"/>
+  <rect x="40" y="100" width="360" height="360" rx="16" fill="#FFFFFF"/>
+  <rect x="70" y="140" width="200" height="28" rx="4" fill="#1B1B1B"/>
+  <rect x="70" y="184" width="280" height="12" rx="2" fill="#9AA0A6"/>
+  <rect x="70" y="210" width="240" height="12" rx="2" fill="#9AA0A6"/>
+  <rect x="70" y="260" width="140" height="44" rx="10" fill="#EE6C4D"/>
+  <rect x="430" y="100" width="330" height="170" rx="16" fill="#FFFFFF"/>
+  <circle cx="520" cy="185" r="40" fill="#E0FBFC"/>
+  <circle cx="595" cy="185" r="40" fill="#98C1D9"/>
+  <circle cx="670" cy="185" r="40" fill="#3D5A80"/>
+  <rect x="430" y="290" width="330" height="170" rx="16" fill="#FFFFFF"/>
+  <rect x="460" y="320" width="180" height="12" rx="2" fill="#1B1B1B"/>
+  <rect x="460" y="350" width="270" height="10" rx="2" fill="#C5CCD3"/>
+  <rect x="460" y="375" width="250" height="10" rx="2" fill="#C5CCD3"/>
+  <rect x="460" y="400" width="200" height="10" rx="2" fill="#C5CCD3"/>
+  <text x="48" y="38" fill="#FFFFFF" font-family="system-ui" font-size="12" font-weight="700">LEARNEST</text>
+</svg>

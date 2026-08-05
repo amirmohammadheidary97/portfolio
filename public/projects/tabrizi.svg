@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="800" y2="500">
+      <stop stop-color="#1A1208"/>
+      <stop offset="1" stop-color="#0D0A06"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#g)"/>
+  <rect x="48" y="40" width="704" height="48" rx="8" fill="#2A2114" fill-opacity="0.8"/>
+  <rect x="68" y="54" width="140" height="20" rx="4" fill="#C9A227"/>
+  <rect x="48" y="120" width="340" height="200" rx="12" fill="#241C10" stroke="#C9A227" stroke-opacity="0.35"/>
+  <text x="72" y="160" fill="#C9A227" font-family="system-ui" font-size="14" font-weight="600">Live Gold Rate</text>
+  <text x="72" y="220" fill="#F5E6C8" font-family="system-ui" font-size="42" font-weight="700">4,285,000</text>
+  <text x="72" y="255" fill="#8A7A5C" font-family="system-ui" font-size="13">IRR / gram · +1.2%</text>
+  <rect x="420" y="120" width="332" height="200" rx="12" fill="#241C10"/>
+  <rect x="448" y="150" width="120" height="40" rx="8" fill="#C9A227"/>
+  <rect x="588" y="150" width="120" height="40" rx="8" fill="#3A2E1A" stroke="#C9A227" stroke-opacity="0.5"/>
+  <rect x="448" y="220" width="260" height="14" rx="2" fill="#3A2E1A"/>
+  <rect x="448" y="250" width="200" height="14" rx="2" fill="#3A2E1A"/>
+  <rect x="48" y="350" width="704" height="110" rx="12" fill="#241C10"/>
+  <rect x="72" y="380" width="160" height="10" rx="2" fill="#8A7A5C"/>
+  <rect x="72" y="410" width="640" height="20" rx="4" fill="#3A2E1A"/>
+  <text x="68" y="68" fill="#1A1208" font-family="system-ui" font-size="12" font-weight="700">TABRIZI GOLD</text>
+</svg>

@@ -1,0 +1,724 @@
+/* Idea 2 — Project Pendulums
+ * Independent project pendulums on threads; stack beads reveal on focus.
+ */
+
+.puppeteer-idea {
+  --bg-deep: #05060a;
+  --bg: #0a0c11;
+  --border: rgba(210, 218, 232, 0.14);
+  --border-strong: rgba(210, 218, 232, 0.32);
+  --text: #e8ecf4;
+  --text-muted: #8b93a7;
+  --text-faint: #5c6478;
+  --accent: #c5ccd8;
+  --accent-bright: #eef1f6;
+  --string: rgba(220, 228, 240, 0.72);
+  --string-taut: rgba(245, 248, 252, 0.98);
+  --bead-bg: rgba(12, 14, 20, 0.92);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Figtree', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --header-h: 4rem;
+  color-scheme: dark;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg-deep);
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: clip;
+}
+
+.puppeteer-idea h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+
+.puppeteer-idea p {
+  margin: 0;
+}
+
+.puppeteer-ambient {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, #0c0f16 0%, var(--bg-deep) 50%, #03040a 100%);
+}
+
+.puppeteer-ambient__glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 38% at 50% -5%, rgba(170, 190, 220, 0.11), transparent 55%),
+    radial-gradient(ellipse 40% 30% at 80% 80%, rgba(120, 140, 180, 0.05), transparent 50%);
+}
+
+.puppeteer-ambient__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+.puppeteer-ambient__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 70% at 50% 45%, transparent 35%, rgba(0, 0, 0, 0.62) 100%);
+}
+
+.puppeteer-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* —— Hero —— */
+.puppeteer-hero {
+  position: relative;
+  height: 100svh;
+  min-height: 640px;
+  overflow: hidden;
+}
+
+.puppeteer-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(1120px, calc(100% - 2rem));
+  margin-inline: auto;
+  padding-block: 1.15rem;
+  min-height: var(--header-h);
+}
+
+.puppeteer-brand {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.puppeteer-brand span {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.puppeteer-idea .lang-toggle {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text-muted);
+}
+
+.puppeteer-idea .lang-toggle:hover,
+.puppeteer-idea .lang-toggle:focus-visible {
+  color: var(--text);
+  border-color: var(--border-strong);
+  outline: none;
+}
+
+.puppeteer-hero__copy {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: calc(var(--header-h) + 0.35rem);
+  bottom: auto;
+  transform: translateX(-50%);
+  width: min(560px, calc(100% - 2rem));
+  text-align: center;
+  pointer-events: none;
+}
+
+.puppeteer-hero__copy a,
+.puppeteer-hero__copy button {
+  pointer-events: auto;
+}
+
+.puppeteer-hero__role {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 0.5rem;
+}
+
+.puppeteer-hero__brand-line {
+  font-size: clamp(2.3rem, 6vw, 3.6rem);
+  color: var(--accent-bright);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 8px 40px rgba(0, 0, 0, 0.55);
+}
+
+.puppeteer-hero__tagline {
+  font-size: clamp(1rem, 2.2vw, 1.18rem);
+  color: var(--text-muted);
+  max-width: 28ch;
+  margin-inline: auto;
+  margin-bottom: 1.05rem;
+}
+
+.puppeteer-hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+  margin-bottom: 0.65rem;
+}
+
+.puppeteer-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.6rem 1.15rem;
+  font-weight: 600;
+  border-radius: 2px;
+  transition: background 0.25s var(--ease-out), color 0.25s var(--ease-out),
+    border-color 0.25s var(--ease-out);
+}
+
+.puppeteer-btn--primary {
+  background: var(--accent-bright);
+  color: #0a0c10;
+}
+
+.puppeteer-btn--primary:hover,
+.puppeteer-btn--primary:focus-visible {
+  background: #fff;
+  outline: none;
+}
+
+.puppeteer-btn--ghost {
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  background: rgba(8, 10, 14, 0.45);
+  backdrop-filter: blur(8px);
+}
+
+.puppeteer-btn--ghost:hover,
+.puppeteer-btn--ghost:focus-visible {
+  border-color: var(--border-strong);
+  color: var(--text);
+  outline: none;
+}
+
+.puppeteer-hero__hint {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+/* —— Stage —— */
+.puppeteer-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.puppeteer-stage__void {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 26%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.puppeteer-stage__rail {
+  position: absolute;
+  inset: 0;
+  width: min(1180px, 100%);
+  margin-inline: auto;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.puppeteer-stage__rail .pendulum {
+  pointer-events: auto;
+}
+
+/* —— Projects (behind curtains) —— */
+.puppeteer-projects {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--header-h) + 7.5rem) 1.25rem 2rem;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.puppeteer-hero.is-opened .puppeteer-projects {
+  pointer-events: auto;
+}
+
+.puppeteer-projects__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 1.25rem;
+}
+
+.puppeteer-projects__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 200px));
+  gap: 1rem 1.15rem;
+  width: min(700px, 100%);
+}
+
+.puppeteer-projects__card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: linear-gradient(165deg, rgba(28, 32, 42, 0.92), rgba(10, 12, 18, 0.96));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.puppeteer-projects__thumb {
+  aspect-ratio: 16 / 10;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.puppeteer-projects__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.puppeteer-projects__name {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.puppeteer-projects__stack {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+
+/* —— Two-piece curtain —— */
+.puppeteer-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  pointer-events: none;
+}
+
+.puppeteer-curtain__panel {
+  position: relative;
+  width: 50%;
+  height: 100%;
+  will-change: transform;
+}
+
+.puppeteer-curtain__panel--left {
+  background:
+    linear-gradient(90deg, rgba(8, 10, 14, 0.15) 0%, transparent 100%),
+    linear-gradient(180deg, #12151c 0%, #0a0c11 55%, #07080c 100%);
+  border-inline-end: 1px solid rgba(210, 218, 232, 0.08);
+  box-shadow: inset -24px 0 48px rgba(0, 0, 0, 0.35);
+}
+
+.puppeteer-curtain__panel--right {
+  background:
+    linear-gradient(270deg, rgba(8, 10, 14, 0.15) 0%, transparent 100%),
+    linear-gradient(180deg, #12151c 0%, #0a0c11 55%, #07080c 100%);
+  border-inline-start: 1px solid rgba(210, 218, 232, 0.08);
+  box-shadow: inset 24px 0 48px rgba(0, 0, 0, 0.35);
+}
+
+/* Subtle vertical folds */
+.puppeteer-curtain__panel--left::before,
+.puppeteer-curtain__panel--right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 28px,
+    rgba(255, 255, 255, 0.015) 28px,
+    rgba(255, 255, 255, 0.015) 30px,
+    transparent 30px,
+    transparent 56px,
+    rgba(0, 0, 0, 0.08) 56px,
+    rgba(0, 0, 0, 0.08) 58px
+  );
+}
+
+.puppeteer-curtain__panel--left::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(220, 228, 240, 0.18) 30%,
+    rgba(220, 228, 240, 0.18) 70%,
+    transparent
+  );
+}
+
+.puppeteer-curtain__panel--right::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(220, 228, 240, 0.18) 30%,
+    rgba(220, 228, 240, 0.18) 70%,
+    transparent
+  );
+}
+
+/* —— Pendulum —— */
+.pendulum {
+  --pendulum-x: 50%;
+  --pendulum-hang: 65%;
+  position: absolute;
+  top: 0;
+  left: var(--pendulum-x);
+  transform: translateX(-50%);
+  width: clamp(96px, 12vw, 140px);
+  height: var(--pendulum-hang);
+  z-index: 1;
+}
+
+.pendulum.is-focused {
+  z-index: 6;
+}
+
+.pendulum__hit {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  min-height: 44px;
+  cursor: pointer;
+  color: var(--string);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pendulum__hit:focus-visible {
+  outline: none;
+}
+
+.pendulum__hit:focus-visible .face--project {
+  box-shadow: 0 0 0 1px var(--border-strong), 0 16px 36px rgba(0, 0, 0, 0.45);
+}
+
+.pendulum__swing {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 0%;
+  will-change: transform;
+}
+
+.pendulum__thread {
+  position: relative;
+  flex: 1 1 auto;
+  width: 12px;
+  min-height: 120px;
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  z-index: 0;
+}
+
+.pendulum__thread-line {
+  display: block;
+  width: 1.5px;
+  height: 100%;
+  min-height: inherit;
+  border-radius: 1px;
+  opacity: 0.85;
+  transform-origin: center top;
+  background: linear-gradient(
+    180deg,
+    rgba(220, 228, 240, 0.15) 0%,
+    var(--string) 14%,
+    var(--string) 100%
+  );
+  box-shadow: 0 0 0.5px rgba(255, 255, 255, 0.25);
+}
+
+.pendulum.is-focused .pendulum__thread-line {
+  background: linear-gradient(
+    180deg,
+    rgba(245, 248, 252, 0.2) 0%,
+    var(--string-taut) 12%,
+    var(--string-taut) 100%
+  );
+  opacity: 1;
+}
+
+.pendulum__beads {
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.42rem;
+  width: max-content;
+  max-width: 128px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.pendulum__bead {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.26rem 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: var(--accent-bright);
+  background: var(--bead-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  opacity: 0;
+  transform: scale(0.7);
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.pendulum__bob {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-top: -2px;
+}
+
+/* —— Skill bob —— */
+.face--skill {
+  width: 100%;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: linear-gradient(165deg, rgba(30, 34, 44, 0.96), rgba(10, 12, 18, 0.98));
+  box-shadow:
+    0 16px 36px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+}
+
+.face__skill-label {
+  font-family: var(--font-display);
+  font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--accent-bright);
+  text-align: center;
+}
+
+.pendulum.is-focused .face--skill {
+  border-color: var(--border-strong);
+}
+
+.pendulum.is-parted {
+  pointer-events: none;
+}
+
+/* —— Project face (legacy, unused) —— */
+.face--project {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: linear-gradient(165deg, rgba(30, 34, 44, 0.96), rgba(10, 12, 18, 0.98));
+  box-shadow:
+    0 16px 36px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  border-radius: 6px;
+  overflow: hidden;
+  padding: 0.4rem 0.4rem 0.55rem;
+}
+
+.face__thumb {
+  aspect-ratio: 16 / 11;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(210, 218, 232, 0.08);
+}
+
+.face__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.face__label {
+  display: block;
+  margin-top: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-inline: 0.15rem;
+}
+
+.pendulum.is-focused .face--project {
+  border-color: var(--border-strong);
+}
+
+/* —— Mobile —— */
+@media (max-width: 720px) {
+  .puppeteer-hero {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 1rem;
+  }
+
+  .puppeteer-header {
+    position: relative;
+  }
+
+  .puppeteer-stage {
+    position: relative;
+    inset: auto;
+    height: auto;
+    min-height: 440px;
+    flex: 1;
+  }
+
+  .puppeteer-stage__void {
+    height: 14%;
+  }
+
+  .puppeteer-stage__rail {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.35rem 0.45rem;
+    height: auto;
+    min-height: 420px;
+    padding: 0 0.5rem 0.5rem;
+    width: 100%;
+  }
+
+  .pendulum {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    height: 220px;
+  }
+
+  .pendulum__beads {
+    top: 20%;
+    max-width: 100px;
+  }
+
+  .pendulum__bead {
+    font-size: 0.52rem;
+    padding: 0.16rem 0.38rem;
+  }
+
+  .puppeteer-projects {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .puppeteer-projects__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .puppeteer-hero__copy {
+    position: relative;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    transform: none;
+    width: min(100% - 2rem, 420px);
+    margin: 0.25rem auto 0.75rem;
+    order: 0;
+  }
+
+  .puppeteer-hero__brand-line {
+    font-size: clamp(2rem, 9vw, 2.55rem);
+  }
+}
+
+@media (max-width: 400px) {
+  .puppeteer-stage__rail {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pendulum {
+    height: 210px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pendulum__swing {
+    will-change: auto;
+  }
+}

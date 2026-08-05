@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <rect width="800" height="500" fill="#111827"/>
+  <rect x="80" y="60" width="300" height="220" rx="16" fill="#1F2937" stroke="#374151"/>
+  <rect x="420" y="60" width="300" height="220" rx="16" fill="#1F2937" stroke="#374151"/>
+  <circle cx="230" cy="150" r="36" fill="#4B5563"/>
+  <circle cx="570" cy="150" r="36" fill="#4B5563"/>
+  <rect x="170" y="210" width="120" height="10" rx="2" fill="#9CA3AF"/>
+  <rect x="510" y="210" width="120" height="10" rx="2" fill="#9CA3AF"/>
+  <rect x="200" y="340" width="400" height="64" rx="32" fill="#1F2937"/>
+  <circle cx="300" cy="372" r="18" fill="#EF4444"/>
+  <circle cx="400" cy="372" r="18" fill="#6B7280"/>
+  <circle cx="500" cy="372" r="18" fill="#6B7280"/>
+  <text x="80" y="40" fill="#60A5FA" font-family="system-ui" font-size="13" font-weight="600">Meeting · WebRTC</text>
+</svg>

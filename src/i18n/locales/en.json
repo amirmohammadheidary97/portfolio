@@ -1,0 +1,119 @@
+{
+  "meta": {
+    "title": "Amir Mohammad — Frontend Engineer",
+    "tagline": "Skills are means — not the goal."
+  },
+  "nav": {
+    "work": "Work",
+    "about": "About",
+    "contact": "Contact",
+    "enter": "Enter the workshop"
+  },
+  "puppeteer": {
+    "aria": "Skills as pendulums",
+    "role": "Frontend Engineer",
+    "tagline": "I orchestrate interfaces.",
+    "hint": "Inspect a skill — see what it becomes",
+    "ctaPrimary": "View projects",
+    "ctaSecondary": "Email me",
+    "ctaClose": "Close curtains",
+    "revealLabel": "Reveal what {{name}} becomes",
+    "projectsAria": "Selected projects",
+    "projectsEyebrow": "Selected work"
+  },
+  "workshop": {
+    "aria": "The Workshop — a digital space where products are assembled from skills",
+    "role": "Frontend Engineer",
+    "hint": "Nothing finished. Everything assembling.",
+    "underConstruction": "Under construction",
+    "manifestoAria": "Workshop manifesto",
+    "manifesto": "I don't know React. I build products with it.",
+    "manifestoSub": "Skills are means — not the goal. Frameworks are parts on the bench.",
+    "phases": {
+      "idle": "Parts on the bench",
+      "wiring": "Circuit forming",
+      "morphing": "Parts → interface",
+      "living": "Product alive",
+      "dissolving": "Back to parts"
+    },
+    "live": {
+      "live": "Live",
+      "overview": "Overview",
+      "samples": "Samples",
+      "reports": "Reports",
+      "samplesLabel": "Active samples",
+      "pipeline": "Pipeline health",
+      "openModal": "Review batch",
+      "export": "Export",
+      "syncing": "Syncing registry…",
+      "activity": "Activity",
+      "feed1": "QA cleared batch #4821",
+      "feed2": "Cold-storage unit B synced",
+      "feed3": "Audit trail exported",
+      "toast": "Registry updated · +28 samples",
+      "modalTitle": "Shipment ready",
+      "modalBody": "Batch #4821 cleared QA and is ready for transfer.",
+      "confirm": "Confirm"
+    }
+  },
+  "work": {
+    "eyebrow": "Selected work",
+    "title": "Built in the workshop",
+    "subtitle": "Products shaped from the same craft — architecture, UI, and motion.",
+    "demo": "Live demo",
+    "demoFake": "Demo (placeholder)",
+    "code": "Code",
+    "private": "Private / NDA"
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "I don't know React.\nI build products with it.",
+    "body": "Frontend Engineer with 7 years of experience specializing in React. Experienced in leading frontend teams on complex projects, including a comprehensive Laboratory and Biobank Management Platform, the Evano (MCI) Gift Card application, as well as e-commerce and e-learning websites. Focused on building scalable application architectures, writing clean and maintainable code, and collaborating closely with backend engineers and design teams to deliver high-quality products.",
+    "years": "7+",
+    "yearsLabel": "years crafting interfaces",
+    "h1": "Lead frontend on complex products",
+    "h2": "Scalable React architectures",
+    "h3": "Close design & backend collaboration"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Let's build something real.",
+    "subtitle": "Open to collaboration, leadership roles, and product-minded frontend work.",
+    "email": "Email",
+    "github": "GitHub",
+    "linkedin": "LinkedIn"
+  },
+  "footer": {
+    "crafted": "Crafted in the workshop · {{year}}"
+  },
+  "projects": {
+    "bims": {
+      "name": "BIMS",
+      "summary": "Comprehensive biobank and laboratory management platform — samples, workflows, and audit-ready operations in one system."
+    },
+    "ewano": {
+      "name": "Ewano GiftCards",
+      "summary": "Client and backoffice for MCI Evano gift cards — catalog, issuance flows, and operator tooling."
+    },
+    "tabrizi": {
+      "name": "Tabrizi Gold",
+      "summary": "Online gold buy & sell web application — live rates, secure orders, and a clear trading experience."
+    },
+    "learnest": {
+      "name": "Learnest",
+      "summary": "Online language learning product — lessons, progress, and an engaging study experience."
+    },
+    "meeting": {
+      "name": "Meeting",
+      "summary": "Real-time video meeting application built on WebRTC — rooms, media controls, and reliable peer connections."
+    },
+    "signage": {
+      "name": "Digital Signage",
+      "summary": "Video wall and digital notice-board software for scheduling and broadcasting content across screens."
+    },
+    "chatRag": {
+      "name": "Chat RAG",
+      "summary": "RAG admin panel and embeddable chatbot widget — knowledge-grounded answers for product surfaces."
+    }
+  }
+}

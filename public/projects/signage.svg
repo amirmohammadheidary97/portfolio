@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <rect width="800" height="500" fill="#0B1020"/>
+  <rect x="40" y="40" width="460" height="280" rx="8" fill="#151B2E"/>
+  <rect x="60" y="70" width="200" height="100" fill="#1E3A5F"/>
+  <rect x="280" y="70" width="200" height="100" fill="#243B55"/>
+  <rect x="60" y="190" width="200" height="100" fill="#2E4A6E"/>
+  <rect x="280" y="190" width="200" height="100" fill="#1A3350"/>
+  <rect x="520" y="40" width="240" height="420" rx="8" fill="#151B2E"/>
+  <rect x="540" y="70" width="200" height="14" rx="2" fill="#94A3B8"/>
+  <rect x="540" y="110" width="200" height="80" rx="6" fill="#1E293B"/>
+  <rect x="540" y="210" width="200" height="80" rx="6" fill="#1E293B"/>
+  <rect x="540" y="310" width="200" height="80" rx="6" fill="#1E293B"/>
+  <rect x="40" y="350" width="460" height="110" rx="8" fill="#151B2E"/>
+  <text x="60" y="400" fill="#38BDF8" font-family="system-ui" font-size="14" font-weight="600">Digital Signage · Playlist</text>
+  <rect x="60" y="420" width="300" height="10" rx="2" fill="#334155"/>
+</svg>
