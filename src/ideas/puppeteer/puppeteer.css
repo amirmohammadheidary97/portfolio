@@ -337,7 +337,7 @@
   color: var(--text-faint);
 }
 
-/* —— Two-piece curtain —— */
+/* —— Two-piece curtain (gathered pleats) —— */
 .puppeteer-curtain {
   position: absolute;
   inset: 0;
@@ -347,78 +347,87 @@
 }
 
 .puppeteer-curtain__panel {
-  position: relative;
+  display: flex;
   width: 50%;
   height: 100%;
-  will-change: transform;
+  background: transparent;
 }
 
 .puppeteer-curtain__panel--left {
-  background:
-    linear-gradient(90deg, rgba(8, 10, 14, 0.15) 0%, transparent 100%),
-    linear-gradient(180deg, #12151c 0%, #0a0c11 55%, #07080c 100%);
-  border-inline-end: 1px solid rgba(210, 218, 232, 0.08);
-  box-shadow: inset -24px 0 48px rgba(0, 0, 0, 0.35);
+  justify-content: flex-start;
 }
 
 .puppeteer-curtain__panel--right {
+  justify-content: flex-end;
+}
+
+.puppeteer-curtain__fold {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  position: relative;
+  transform-origin: 50% 0%;
+  will-change: flex-basis, transform;
+  background: linear-gradient(180deg, #141820 0%, #0a0c11 55%, #06070b 100%);
+  backface-visibility: hidden;
+}
+
+/* Alternating ridge / valley — reads as fabric even while closed */
+.puppeteer-curtain__panel--left .puppeteer-curtain__fold:nth-child(odd),
+.puppeteer-curtain__panel--right .puppeteer-curtain__fold:nth-child(even) {
   background:
-    linear-gradient(270deg, rgba(8, 10, 14, 0.15) 0%, transparent 100%),
-    linear-gradient(180deg, #12151c 0%, #0a0c11 55%, #07080c 100%);
-  border-inline-start: 1px solid rgba(210, 218, 232, 0.08);
-  box-shadow: inset 24px 0 48px rgba(0, 0, 0, 0.35);
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0%, transparent 45%, rgba(0, 0, 0, 0.2) 100%),
+    linear-gradient(180deg, #171c26 0%, #0c0e14 55%, #07080c 100%);
+  box-shadow:
+    inset -1px 0 0 rgba(255, 255, 255, 0.04),
+    inset 3px 0 10px rgba(0, 0, 0, 0.28);
 }
 
-/* Subtle vertical folds */
-.puppeteer-curtain__panel--left::before,
-.puppeteer-curtain__panel--right::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0.35;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0,
-    transparent 28px,
-    rgba(255, 255, 255, 0.015) 28px,
-    rgba(255, 255, 255, 0.015) 30px,
-    transparent 30px,
-    transparent 56px,
-    rgba(0, 0, 0, 0.08) 56px,
-    rgba(0, 0, 0, 0.08) 58px
-  );
+.puppeteer-curtain__panel--left .puppeteer-curtain__fold:nth-child(even),
+.puppeteer-curtain__panel--right .puppeteer-curtain__fold:nth-child(odd) {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0%, transparent 55%, rgba(255, 255, 255, 0.02) 100%),
+    linear-gradient(180deg, #0e1118 0%, #080a0e 55%, #050608 100%);
+  box-shadow:
+    inset 1px 0 0 rgba(0, 0, 0, 0.45),
+    inset -3px 0 12px rgba(0, 0, 0, 0.4);
 }
 
-.puppeteer-curtain__panel--left::after {
+/* Soft highlight where the two halves meet */
+.puppeteer-curtain__panel--left .puppeteer-curtain__fold:last-child::after,
+.puppeteer-curtain__panel--right .puppeteer-curtain__fold:first-child::after {
   content: '';
   position: absolute;
   top: 0;
-  right: 0;
   width: 2px;
   height: 100%;
   background: linear-gradient(
     180deg,
     transparent,
-    rgba(220, 228, 240, 0.18) 30%,
-    rgba(220, 228, 240, 0.18) 70%,
+    rgba(220, 228, 240, 0.16) 30%,
+    rgba(220, 228, 240, 0.16) 70%,
     transparent
   );
 }
 
-.puppeteer-curtain__panel--right::after {
+.puppeteer-curtain__panel--left .puppeteer-curtain__fold:last-child::after {
+  right: 0;
+}
+
+.puppeteer-curtain__panel--right .puppeteer-curtain__fold:first-child::after {
+  left: 0;
+}
+
+/* Top rod shadow — fabric hanging from a rail */
+.puppeteer-curtain__fold::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    rgba(220, 228, 240, 0.18) 30%,
-    rgba(220, 228, 240, 0.18) 70%,
-    transparent
-  );
+  right: 0;
+  height: 12%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent);
+  pointer-events: none;
 }
 
 /* —— Pendulum —— */

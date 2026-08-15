@@ -2,6 +2,12 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import gsap from 'gsap'
 import { useTranslation } from 'react-i18next'
 import type { PendulumDef, PendulumId } from './puppets'
+import {
+  CURTAIN_CLOSE_DELAY,
+  CURTAIN_CLOSE_DURATION,
+  CURTAIN_OPEN_DELAY,
+  CURTAIN_OPEN_DURATION,
+} from './curtainMotion'
 import { prefersReducedMotion, startPendulum } from './stringPhysics'
 
 type PendulumProps = {
@@ -65,11 +71,12 @@ export function Pendulum({
     const root = rootRef.current
     if (!root) return
 
-    const exitX = def.side === 'left' ? '-55vw' : '55vw'
+    const exitX = def.side === 'left' ? '-58vw' : '58vw'
     gsap.to(root, {
       x: parted ? exitX : 0,
-      duration: reduced ? 0.01 : 1.15,
-      ease: 'power3.inOut',
+      duration: reduced ? 0.01 : parted ? CURTAIN_OPEN_DURATION : CURTAIN_CLOSE_DURATION,
+      delay: reduced ? 0 : parted ? CURTAIN_OPEN_DELAY : CURTAIN_CLOSE_DELAY,
+      ease: parted ? 'power3.inOut' : 'power2.inOut',
       overwrite: 'auto',
     })
   }, [parted, def.side, reduced])
