@@ -34,3 +34,63 @@ export function startPendulum(
   tween.progress(Math.random())
   return tween
 }
+
+/**
+ * Quick puppet jump on the bob — crouch, spring up the string, bounce land.
+ * Leaves the swing rotation tween alone.
+ */
+export function jumpPendulum(
+  bob: HTMLElement,
+  thread?: HTMLElement | null,
+  reduced = false,
+): gsap.core.Timeline | null {
+  if (reduced) return null
+
+  gsap.killTweensOf(bob, 'y,scaleX,scaleY')
+  if (thread) gsap.killTweensOf(thread, 'scaleY')
+
+  const tl = gsap.timeline({ defaults: { overwrite: 'auto' } })
+
+  // Anticipation crouch
+  tl.to(bob, {
+    y: 7,
+    scaleY: 0.9,
+    scaleX: 1.08,
+    duration: 0.09,
+    ease: 'power2.in',
+  })
+
+  // Launch up the string
+  tl.to(bob, {
+    y: -38,
+    scaleY: 1.1,
+    scaleX: 0.92,
+    duration: 0.24,
+    ease: 'power3.out',
+  })
+  if (thread) {
+    tl.to(
+      thread,
+      { scaleY: 0.86, duration: 0.24, ease: 'power3.out' },
+      '<',
+    )
+  }
+
+  // Land with a soft bounce
+  tl.to(bob, {
+    y: 0,
+    scaleY: 1,
+    scaleX: 1,
+    duration: 0.48,
+    ease: 'bounce.out',
+  })
+  if (thread) {
+    tl.to(
+      thread,
+      { scaleY: 1, duration: 0.48, ease: 'bounce.out' },
+      '<',
+    )
+  }
+
+  return tl
+}

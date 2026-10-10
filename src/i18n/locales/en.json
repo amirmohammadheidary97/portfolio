@@ -19,7 +19,8 @@
     "ctaClose": "Close curtains",
     "revealLabel": "Reveal what {{name}} becomes",
     "projectsAria": "Selected projects",
-    "projectsEyebrow": "Selected work"
+    "projectsEyebrow": "Selected work",
+    "projectBack": "All projects"
   },
   "workshop": {
     "aria": "The Workshop — a digital space where products are assembled from skills",
@@ -114,6 +115,18 @@
     "chatRag": {
       "name": "Chat RAG",
       "summary": "RAG admin panel and embeddable chatbot widget — knowledge-grounded answers for product surfaces."
+    },
+    "zeusClient": {
+      "name": "Zeus Client Website",
+      "summary": "Client-facing Zeus website — product presence, flows, and a polished browsing experience."
+    },
+    "zeusAdmin": {
+      "name": "Zeus Admin Panel",
+      "summary": "Operations dashboard for Zeus — management views, workflows, and operator tooling."
+    },
+    "peygram": {
+      "name": "Peygram",
+      "summary": "Messaging product — conversations, real-time updates, and a clean chat experience."
     }
   }
 }

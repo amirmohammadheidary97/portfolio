@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useTranslation } from 'react-i18next'
 import { LanguageToggle } from '../../components/LanguageToggle'
-import { contact, projects } from '../../data/projects'
+import { contact, projects, type Project } from '../../data/projects'
 import { Pendulum } from './Puppet'
 import { pendulums, type PendulumId } from './puppets'
 import {
@@ -14,6 +14,39 @@ import { prefersReducedMotion } from './stringPhysics'
 
 /** Vertical pleats per curtain half — denser = more fabric-like gather */
 const CURTAIN_FOLDS = 20
+const PROJECT_DETAIL_MS = 0.45
+
+type CardRect = { top: number; left: number; width: number; height: number }
+
+function readRect(el: Element): CardRect {
+  const r = el.getBoundingClientRect()
+  return { top: r.top, left: r.left, width: r.width, height: r.height }
+}
+
+function ProjectCardFace({
+  project,
+  name,
+  fullStack = false,
+  titleId,
+}: {
+  project: Project
+  name: string
+  fullStack?: boolean
+  titleId?: string
+}) {
+  const stack = fullStack ? project.stack : project.stack.slice(0, 3)
+  return (
+    <>
+      <div className="puppeteer-projects__thumb">
+        <img src={project.image} alt="" loading="lazy" decoding="async" />
+      </div>
+      <span className="puppeteer-projects__name" id={titleId}>
+        {name}
+      </span>
+      <span className="puppeteer-projects__stack">{stack.join(' · ')}</span>
+    </>
+  )
+}
 
 function setFoldsOpen(folds: NodeListOf<HTMLElement>, side: 'left' | 'right') {
   folds.forEach((fold, i) => {
@@ -49,7 +82,17 @@ export function PuppeteerHero() {
   const hasDrawnRef = useRef(false)
   const [focused, setFocused] = useState<PendulumId | null>(null)
   const [opened, setOpened] = useState(false)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [closing, setClosing] = useState(false)
   const [reduced, setReduced] = useState(prefersReducedMotion)
+  const cardRefs = useRef(new Map<string, HTMLLIElement>())
+  const gridRef = useRef<HTMLUListElement | null>(null)
+  const expandRootRef = useRef<HTMLDivElement | null>(null)
+  const expandedRef = useRef<HTMLElement | null>(null)
+  const scrimRef = useRef<HTMLButtonElement | null>(null)
+  const extraRef = useRef<HTMLDivElement | null>(null)
+  const sourceRectRef = useRef<CardRect | null>(null)
+  const flipTlRef = useRef<gsap.core.Timeline | null>(null)
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -329,11 +372,224 @@ export function PuppeteerHero() {
     setOpened(true)
   }
 
+  const killFlip = useCallback(() => {
+    flipTlRef.current?.kill()
+    flipTlRef.current = null
+  }, [])
+
+  /** Keep the maximized card locked to the projects grid box. */
+  const pinExpandedToGrid = useCallback(() => {
+    const expanded = expandedRef.current
+    const grid = gridRef.current
+    const root = expandRootRef.current
+    if (!expanded || !grid || !root) return
+
+    const g = grid.getBoundingClientRect()
+    const r = root.getBoundingClientRect()
+    gsap.set(expanded, {
+      position: 'absolute',
+      top: g.top - r.top,
+      left: g.left - r.left,
+      width: g.width,
+      height: g.height,
+      margin: 0,
+      overflow: 'auto',
+      x: 0,
+      y: 0,
+      scaleX: 1,
+      scaleY: 1,
+      transformOrigin: '0 0',
+      zIndex: 6,
+    })
+  }, [])
+
   const closeCurtains = () => {
+    killFlip()
+    sourceRectRef.current = null
+    setClosing(false)
+    setSelectedId(null)
     setOpened(false)
   }
 
-  const featured = projects.filter((p) => p.featured).slice(0, 6)
+  const openProject = useCallback(
+    (id: string) => {
+      if (closing || selectedId) return
+      const card = cardRefs.current.get(id)
+      if (!card) return
+      killFlip()
+      sourceRectRef.current = readRect(card)
+      setClosing(false)
+      setSelectedId(id)
+    },
+    [closing, killFlip, selectedId],
+  )
+
+  const finishClose = useCallback(() => {
+    killFlip()
+    sourceRectRef.current = null
+    setSelectedId(null)
+    setClosing(false)
+  }, [killFlip])
+
+  const closeProject = useCallback(() => {
+    if (!selectedId || closing) return
+
+    if (reduced) {
+      finishClose()
+      return
+    }
+
+    const expanded = expandedRef.current
+    const placeholder = cardRefs.current.get(selectedId)
+    const scrim = scrimRef.current
+    const extra = extraRef.current
+    if (!expanded || !placeholder) {
+      finishClose()
+      return
+    }
+
+    setClosing(true)
+    killFlip()
+
+    const from = readRect(expanded)
+    const to = readRect(placeholder)
+
+    gsap.set(expanded, {
+      position: 'fixed',
+      top: from.top,
+      left: from.left,
+      width: from.width,
+      height: from.height,
+      margin: 0,
+      overflow: 'hidden',
+      x: 0,
+      y: 0,
+      scaleX: 1,
+      scaleY: 1,
+      transformOrigin: '0 0',
+      zIndex: 6,
+    })
+
+    const tl = gsap.timeline({
+      defaults: { overwrite: 'auto' },
+      onComplete: finishClose,
+    })
+    flipTlRef.current = tl
+
+    if (extra) tl.to(extra, { opacity: 0, duration: 0.14, ease: 'power1.out' }, 0)
+    if (scrim) tl.to(scrim, { opacity: 0, duration: PROJECT_DETAIL_MS * 0.85, ease: 'power2.out' }, 0)
+    tl.to(
+      expanded,
+      {
+        top: to.top,
+        left: to.left,
+        width: to.width,
+        height: to.height,
+        duration: PROJECT_DETAIL_MS,
+        ease: 'power3.inOut',
+      },
+      0,
+    )
+  }, [closing, finishClose, killFlip, reduced, selectedId])
+
+  useLayoutEffect(() => {
+    if (!selectedId) return
+
+    const expanded = expandedRef.current
+    const grid = gridRef.current
+    const scrim = scrimRef.current
+    const extra = extraRef.current
+    const source = sourceRectRef.current
+    if (!expanded || !grid || !source) return
+
+    if (reduced) {
+      pinExpandedToGrid()
+      gsap.set(scrim, { opacity: 1 })
+      gsap.set(extra, { opacity: 1 })
+      sourceRectRef.current = null
+      return
+    }
+
+    killFlip()
+    if (extra) gsap.set(extra, { clearProps: 'opacity' })
+    if (scrim) gsap.set(scrim, { clearProps: 'opacity' })
+
+    // Destination is the grid box — maximized card matches it exactly
+    const dest = readRect(grid)
+
+    gsap.set(expanded, {
+      position: 'fixed',
+      top: source.top,
+      left: source.left,
+      width: source.width,
+      height: source.height,
+      margin: 0,
+      overflow: 'hidden',
+      x: 0,
+      y: 0,
+      scaleX: 1,
+      scaleY: 1,
+      transformOrigin: '0 0',
+      zIndex: 6,
+    })
+    if (extra) gsap.set(extra, { opacity: 0 })
+    if (scrim) gsap.set(scrim, { opacity: 0 })
+
+    const tl = gsap.timeline({
+      defaults: { overwrite: 'auto' },
+      onComplete: () => {
+        pinExpandedToGrid()
+        sourceRectRef.current = null
+        if (extra) gsap.set(extra, { clearProps: 'opacity' })
+      },
+    })
+    flipTlRef.current = tl
+
+    tl.to(
+      expanded,
+      {
+        top: dest.top,
+        left: dest.left,
+        width: dest.width,
+        height: dest.height,
+        duration: PROJECT_DETAIL_MS,
+        ease: 'power3.inOut',
+      },
+      0,
+    )
+    if (scrim) {
+      tl.to(scrim, { opacity: 1, duration: PROJECT_DETAIL_MS * 0.75, ease: 'power2.out' }, 0)
+    }
+    if (extra) {
+      tl.to(extra, { opacity: 1, duration: 0.22, ease: 'power2.out' }, PROJECT_DETAIL_MS * 0.55)
+    }
+
+    return () => {
+      killFlip()
+    }
+  }, [killFlip, pinExpandedToGrid, reduced, selectedId])
+
+  useEffect(() => {
+    if (!selectedId || closing) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation()
+        closeProject()
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    const closeBtn = projectsRef.current?.querySelector<HTMLButtonElement>(
+      '.puppeteer-projects__expanded .puppeteer-projects__back',
+    )
+    closeBtn?.focus()
+    return () => document.removeEventListener('keydown', onKey)
+  }, [closeProject, closing, selectedId])
+
+  const featured = projects.filter((p) => p.featured)
+  const selected = selectedId
+    ? (featured.find((p) => p.id === selectedId) ?? null)
+    : null
+  const detailActive = Boolean(selected)
 
   return (
     <section
@@ -345,10 +601,21 @@ export function PuppeteerHero() {
         <a href="#top" className="puppeteer-brand">
           Amir <span>Mohammad</span>
         </a>
-        <LanguageToggle />
+        <div className="puppeteer-header__actions">
+          {opened && (
+            <button
+              type="button"
+              className="puppeteer-btn puppeteer-btn--ghost puppeteer-btn--compact"
+              onClick={closeCurtains}
+            >
+              {t('puppeteer.ctaClose')}
+            </button>
+          )}
+          <LanguageToggle />
+        </div>
       </header>
 
-      <div className="puppeteer-hero__copy">
+      <div className="puppeteer-hero__copy" aria-hidden={opened || undefined}>
         <p className="puppeteer-hero__role">{t('puppeteer.role')}</p>
         <h1 className="puppeteer-hero__brand-line">Amir Mohammad</h1>
         <p className="puppeteer-hero__tagline">{t('puppeteer.tagline')}</p>
@@ -356,51 +623,140 @@ export function PuppeteerHero() {
           <a className="puppeteer-btn puppeteer-btn--primary" href={`mailto:${contact.email}`}>
             {t('puppeteer.ctaSecondary')}
           </a>
-          {!opened ? (
-            <button
-              type="button"
-              className="puppeteer-btn puppeteer-btn--ghost"
-              onClick={openCurtains}
-            >
-              {t('puppeteer.ctaPrimary')}
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="puppeteer-btn puppeteer-btn--ghost"
-              onClick={closeCurtains}
-            >
-              {t('puppeteer.ctaClose')}
-            </button>
-          )}
+          <button
+            type="button"
+            className="puppeteer-btn puppeteer-btn--ghost"
+            onClick={openCurtains}
+            tabIndex={opened ? -1 : undefined}
+          >
+            {t('puppeteer.ctaPrimary')}
+          </button>
         </div>
-        {!opened && <p className="puppeteer-hero__hint">{t('puppeteer.hint')}</p>}
+        <p className="puppeteer-hero__hint">{t('puppeteer.hint')}</p>
       </div>
 
       <div ref={stageRef} id="stage" className="puppeteer-stage">
         {/* Projects wait behind the curtains */}
         <div
           ref={projectsRef}
-          className="puppeteer-projects"
-          aria-hidden="true"
+          className={[
+            'puppeteer-projects',
+            detailActive ? 'is-detail' : '',
+            closing ? 'is-closing' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          aria-hidden={!opened}
           aria-label={t('puppeteer.projectsAria')}
         >
           <p className="puppeteer-projects__eyebrow">{t('puppeteer.projectsEyebrow')}</p>
-          <ul className="puppeteer-projects__grid">
-            {featured.map((project) => (
-              <li key={project.id} className="puppeteer-projects__card">
-                <div className="puppeteer-projects__thumb">
-                  <img src={project.image} alt="" loading="lazy" decoding="async" />
-                </div>
-                <span className="puppeteer-projects__name">
-                  {t(`projects.${project.nameKey}.name`)}
-                </span>
-                <span className="puppeteer-projects__stack">
-                  {project.stack.slice(0, 3).join(' · ')}
-                </span>
-              </li>
-            ))}
+          <ul ref={gridRef} className="puppeteer-projects__grid">
+            {featured.map((project) => {
+              const isPlaceholder = selectedId === project.id
+              const isDimmed = Boolean(selectedId && !isPlaceholder)
+              return (
+                <li
+                  key={project.id}
+                  ref={(node) => {
+                    if (node) cardRefs.current.set(project.id, node)
+                    else cardRefs.current.delete(project.id)
+                  }}
+                  className={[
+                    'puppeteer-projects__card',
+                    isPlaceholder ? 'is-placeholder' : '',
+                    isDimmed ? 'is-dimmed' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  aria-hidden={isPlaceholder || undefined}
+                >
+                  <button
+                    type="button"
+                    className="puppeteer-projects__hit"
+                    onClick={() => openProject(project.id)}
+                    aria-expanded={isPlaceholder}
+                    aria-controls={isPlaceholder ? 'project-expanded' : undefined}
+                    tabIndex={opened && !selectedId ? 0 : -1}
+                    disabled={Boolean(selectedId)}
+                  >
+                    <ProjectCardFace
+                      project={project}
+                      name={t(`projects.${project.nameKey}.name`)}
+                    />
+                  </button>
+                </li>
+              )
+            })}
           </ul>
+
+          {selected ? (
+            <div
+              ref={expandRootRef}
+              className={`puppeteer-projects__expand${closing ? ' is-closing' : ''}`}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="project-expanded-title"
+              id="project-expanded"
+            >
+              <button
+                ref={scrimRef}
+                type="button"
+                className="puppeteer-projects__scrim"
+                onClick={closeProject}
+                tabIndex={-1}
+                aria-label={t('puppeteer.projectBack')}
+              />
+              <article ref={expandedRef} className="puppeteer-projects__expanded">
+                <button
+                  type="button"
+                  className="puppeteer-btn puppeteer-btn--ghost puppeteer-btn--compact puppeteer-projects__back"
+                  onClick={closeProject}
+                  tabIndex={opened && !closing ? 0 : -1}
+                >
+                  {t('puppeteer.projectBack')}
+                </button>
+                <div className="puppeteer-projects__expanded-face">
+                  <ProjectCardFace
+                    project={selected}
+                    name={t(`projects.${selected.nameKey}.name`)}
+                    fullStack
+                    titleId="project-expanded-title"
+                  />
+                </div>
+                <div ref={extraRef} className="puppeteer-projects__extra">
+                  <p className="puppeteer-projects__summary">
+                    {t(`projects.${selected.nameKey}.summary`)}
+                  </p>
+                  <div className="puppeteer-projects__links">
+                    {selected.demoUrl ? (
+                      <a
+                        className="puppeteer-btn puppeteer-btn--primary puppeteer-btn--compact"
+                        href={selected.demoUrl}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        tabIndex={opened && !closing ? 0 : -1}
+                      >
+                        {selected.hasFakeDemo ? t('work.demoFake') : t('work.demo')}
+                      </a>
+                    ) : (
+                      <span className="puppeteer-projects__private">{t('work.private')}</span>
+                    )}
+                    {selected.githubUrl ? (
+                      <a
+                        className="puppeteer-btn puppeteer-btn--ghost puppeteer-btn--compact"
+                        href={selected.githubUrl}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        tabIndex={opened && !closing ? 0 : -1}
+                      >
+                        {t('work.code')}
+                      </a>
+                    ) : null}
+                  </div>
+                </div>
+              </article>
+            </div>
+          ) : null}
         </div>
 
         {/* Two-piece curtain — vertical pleats gather to the sides */}

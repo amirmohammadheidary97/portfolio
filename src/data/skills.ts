@@ -9,6 +9,9 @@ export type SkillId =
   | 'vite'
   | 'reactQuery'
   | 'zustand'
+  | 'git'
+  | 'js'
+  | 'redux'
 
 export interface Skill {
   id: SkillId
@@ -27,12 +30,15 @@ export interface Skill {
  */
 export const skills: Skill[] = [
   { id: 'react', label: 'React', morphsTo: 'Card', t: 0.04, lift: 0 },
-  { id: 'typescript', label: 'TypeScript', morphsTo: 'Chart', t: 0.18, lift: 8 },
-  { id: 'gsap', label: 'GSAP', morphsTo: 'Navbar', t: 0.32, lift: -2 },
-  { id: 'graphql', label: 'GraphQL', morphsTo: 'Modal', t: 0.46, lift: 10 },
-  { id: 'css', label: 'CSS', morphsTo: 'Button', t: 0.58, lift: 2 },
-  { id: 'vite', label: 'Vite', morphsTo: 'Loader', t: 0.7, lift: 12 },
-  { id: 'reactQuery', label: 'React Query', morphsTo: 'Feed', t: 0.84, lift: -4 },
+  { id: 'typescript', label: 'TypeScript', morphsTo: 'Chart', t: 0.14, lift: 8 },
+  { id: 'js', label: 'JS', morphsTo: 'Widget', t: 0.24, lift: 4 },
+  { id: 'gsap', label: 'GSAP', morphsTo: 'Navbar', t: 0.34, lift: -2 },
+  { id: 'graphql', label: 'GraphQL', morphsTo: 'Modal', t: 0.44, lift: 10 },
+  { id: 'css', label: 'CSS', morphsTo: 'Button', t: 0.54, lift: 2 },
+  { id: 'redux', label: 'Redux', morphsTo: 'Store', t: 0.64, lift: -6 },
+  { id: 'vite', label: 'Vite', morphsTo: 'Loader', t: 0.74, lift: 12 },
+  { id: 'git', label: 'Git', morphsTo: 'Diff', t: 0.84, lift: 3 },
+  { id: 'reactQuery', label: 'React Query', morphsTo: 'Feed', t: 0.9, lift: -4 },
   { id: 'zustand', label: 'Zustand', morphsTo: 'Dashboard', t: 0.96, lift: 6 },
 ]
 

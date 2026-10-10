@@ -8,7 +8,7 @@ import {
   CURTAIN_OPEN_DELAY,
   CURTAIN_OPEN_DURATION,
 } from './curtainMotion'
-import { prefersReducedMotion, startPendulum } from './stringPhysics'
+import { jumpPendulum, prefersReducedMotion, startPendulum } from './stringPhysics'
 
 type PendulumProps = {
   def: PendulumDef
@@ -38,7 +38,9 @@ export function Pendulum({
   const rootRef = useRef<HTMLDivElement>(null)
   const swingRef = useRef<HTMLDivElement>(null)
   const stringLineRef = useRef<HTMLSpanElement>(null)
+  const bobRef = useRef<HTMLDivElement>(null)
   const beadsRef = useRef<HTMLDivElement>(null)
+  const jumpTlRef = useRef<gsap.core.Timeline | null>(null)
   const skipFocusFromPointer = useRef(false)
   const [reduced, setReduced] = useState(prefersReducedMotion)
 
@@ -80,6 +82,13 @@ export function Pendulum({
       overwrite: 'auto',
     })
   }, [parted, def.side, reduced])
+
+  useEffect(() => {
+    return () => {
+      jumpTlRef.current?.kill()
+      jumpTlRef.current = null
+    }
+  }, [])
 
   // Focus reveals what the skill builds toward
   useEffect(() => {
@@ -169,7 +178,13 @@ export function Pendulum({
           if (isFinePointer()) onBlur(def.id)
         }}
         onClick={() => {
-          if (!isFinePointer() && !parted) onToggle(def.id)
+          if (parted) return
+          const bob = bobRef.current
+          if (bob) {
+            jumpTlRef.current?.kill()
+            jumpTlRef.current = jumpPendulum(bob, stringLineRef.current, reduced)
+          }
+          if (!isFinePointer()) onToggle(def.id)
         }}
       >
         <div ref={swingRef} className="pendulum__swing">
@@ -190,7 +205,7 @@ export function Pendulum({
             ))}
           </div>
 
-          <div className="pendulum__bob">
+          <div ref={bobRef} className="pendulum__bob">
             <div className="face face--skill">
               <span className="face__skill-label">{def.label}</span>
             </div>

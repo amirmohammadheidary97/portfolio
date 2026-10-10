@@ -103,6 +103,13 @@
   min-height: var(--header-h);
 }
 
+.puppeteer-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-shrink: 0;
+}
+
 .puppeteer-brand {
   font-family: var(--font-display);
   font-size: 1.05rem;
@@ -143,11 +150,29 @@
   width: min(560px, calc(100% - 2rem));
   text-align: center;
   pointer-events: none;
+  opacity: 1;
+  transition:
+    opacity 0.38s var(--ease-out),
+    transform 0.38s var(--ease-out);
 }
 
 .puppeteer-hero__copy a,
 .puppeteer-hero__copy button {
   pointer-events: auto;
+}
+
+/* Leave with the open — don't keep the closed-curtain intro on stage */
+.puppeteer-hero.is-opened .puppeteer-hero__copy {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-0.75rem);
+  pointer-events: none;
+  transition-duration: 0.32s;
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+.puppeteer-hero.is-opened .puppeteer-hero__copy a,
+.puppeteer-hero.is-opened .puppeteer-hero__copy button {
+  pointer-events: none;
 }
 
 .puppeteer-hero__role {
@@ -219,6 +244,13 @@
   outline: none;
 }
 
+.puppeteer-btn--compact {
+  min-height: 36px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
 .puppeteer-hero__hint {
   font-family: var(--font-mono);
   font-size: 0.65rem;
@@ -269,14 +301,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: calc(var(--header-h) + 7.5rem) 1.25rem 2rem;
+  justify-content: flex-start;
+  padding: calc(var(--header-h) + 5.5rem) 1.25rem 2rem;
+  overflow-y: auto;
   opacity: 0;
   pointer-events: none;
 }
 
 .puppeteer-hero.is-opened .puppeteer-projects {
   pointer-events: auto;
+  padding-top: calc(var(--header-h) + 1.25rem);
 }
 
 .puppeteer-projects__eyebrow {
@@ -285,28 +319,90 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--text-faint);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.15rem;
+  flex-shrink: 0;
 }
 
 .puppeteer-projects__grid {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 0 1.25rem;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 200px));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1rem 1.15rem;
-  width: min(700px, 100%);
+  width: min(980px, 100%);
 }
 
 .puppeteer-projects__card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  padding: 0.55rem;
+  gap: 0;
+  padding: 0.75rem;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: linear-gradient(165deg, rgba(28, 32, 42, 0.92), rgba(10, 12, 18, 0.96));
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  width: 100%;
+  transition:
+    opacity 0.3s var(--ease-out),
+    border-color 0.25s ease,
+    box-shadow 0.3s var(--ease-out),
+    transform 0.3s var(--ease-out);
+}
+
+/* Keep layout slot; hide only the face while the overlay shows the real card */
+.puppeteer-projects__card.is-placeholder {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.puppeteer-projects__card.is-dimmed {
+  opacity: 0.35;
+  pointer-events: none;
+  transform: none;
+}
+
+.puppeteer-projects__hit {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  border-radius: inherit;
+}
+
+.puppeteer-projects__card:not(.is-placeholder):not(.is-dimmed):hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.42);
+}
+
+.puppeteer-projects__hit:hover .puppeteer-projects__thumb img,
+.puppeteer-projects__hit:focus-visible .puppeteer-projects__thumb img {
+  transform: scale(1.035);
+}
+
+.puppeteer-projects__hit:hover,
+.puppeteer-projects__hit:focus-visible {
+  outline: none;
+}
+
+.puppeteer-projects__hit:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+
+.puppeteer-projects__hit:disabled {
+  cursor: default;
 }
 
 .puppeteer-projects__thumb {
@@ -320,11 +416,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.45s var(--ease-out);
 }
 
 .puppeteer-projects__name {
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 1.12rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--text);
@@ -332,8 +429,103 @@
 
 .puppeteer-projects__stack {
   font-family: var(--font-mono);
-  font-size: 0.58rem;
+  font-size: 0.68rem;
   letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+
+/* —— Expanded overlay (sized to the grid box; FLIP via GSAP) —— */
+.puppeteer-projects__expand {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.puppeteer-projects__scrim {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(5, 6, 10, 0.72);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.puppeteer-projects__expanded {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: linear-gradient(165deg, rgba(28, 32, 42, 0.96), rgba(10, 12, 18, 0.98));
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.55);
+  pointer-events: auto;
+  will-change: top, left, width, height;
+  box-sizing: border-box;
+}
+
+.puppeteer-projects__expanded-face {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.puppeteer-projects__expanded .puppeteer-projects__thumb {
+  flex: 1;
+  min-height: 140px;
+  aspect-ratio: auto;
+}
+
+.puppeteer-projects__expanded .puppeteer-projects__name {
+  font-size: 1.35rem;
+  padding-inline-end: 6.5rem;
+}
+
+.puppeteer-projects__expanded .puppeteer-projects__stack {
+  font-size: 0.72rem;
+}
+
+.puppeteer-projects__back {
+  position: absolute;
+  top: 0.85rem;
+  inset-inline-end: 0.85rem;
+  z-index: 2;
+}
+
+.puppeteer-projects__extra {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.35rem;
+  flex-shrink: 0;
+}
+
+.puppeteer-projects__summary {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.puppeteer-projects__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.puppeteer-projects__private {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
   color: var(--text-faint);
 }
 
@@ -553,6 +745,8 @@
   flex: 0 0 auto;
   width: 100%;
   margin-top: -2px;
+  transform-origin: 50% 100%;
+  will-change: transform;
 }
 
 /* —— Skill bob —— */
@@ -697,7 +891,17 @@
 
   .puppeteer-projects__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
+    gap: 0.85rem;
+    width: 100%;
+  }
+
+  .puppeteer-projects__name {
+    font-size: 1.02rem;
+  }
+
+  .puppeteer-projects__expanded .puppeteer-projects__name {
+    font-size: 1.2rem;
+    padding-inline-end: 5.5rem;
   }
 
   .puppeteer-hero__copy {
@@ -709,6 +913,17 @@
     width: min(100% - 2rem, 420px);
     margin: 0.25rem auto 0.75rem;
     order: 0;
+  }
+
+  .puppeteer-hero.is-opened .puppeteer-hero__copy {
+    transform: translateY(-0.5rem);
+    max-height: 0;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .puppeteer-hero.is-opened .puppeteer-projects {
+    padding-top: 1rem;
   }
 
   .puppeteer-hero__brand-line {
@@ -727,7 +942,17 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pendulum__swing {
+  .puppeteer-projects__card,
+  .puppeteer-projects__thumb img {
+    transition: none;
+  }
+
+  .puppeteer-projects__expanded {
+    will-change: auto;
+  }
+
+  .pendulum__swing,
+  .pendulum__bob {
     will-change: auto;
   }
 }

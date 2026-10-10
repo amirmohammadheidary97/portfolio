@@ -14,6 +14,30 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: 'zeusClient',
+    nameKey: 'zeusClient',
+    stack: ['React', 'TypeScript', 'Next.js', 'Tailwind'],
+    image: '/projects/zeus-client.svg',
+    featured: true,
+    hasFakeDemo: false,
+  },
+  {
+    id: 'zeusAdmin',
+    nameKey: 'zeusAdmin',
+    stack: ['React', 'TypeScript', 'React Query', 'Zustand'],
+    image: '/projects/zeus-admin.svg',
+    featured: true,
+    hasFakeDemo: false,
+  },
+  {
+    id: 'peygram',
+    nameKey: 'peygram',
+    stack: ['React', 'TypeScript', 'WebSocket', 'Zustand'],
+    image: '/projects/peygram.svg',
+    featured: true,
+    hasFakeDemo: false,
+  },
+  {
     id: 'bims',
     nameKey: 'bims',
     stack: ['React', 'TypeScript', 'React Query', 'Zustand'],
